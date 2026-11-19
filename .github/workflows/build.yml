@@ -7,7 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip -q FireDS.zip
+      - name: Unzip and patch
+        run: |
+          unzip -oq FireDS.zip
+          f=$(find FireDS -name Home.kt | head -1)
+          grep -q 'saveable.rememberSaveable' "$f" || sed -i 's/^import androidx.compose.runtime.\*$/&\nimport androidx.compose.runtime.saveable.rememberSaveable/' "$f"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
